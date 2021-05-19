@@ -342,6 +342,7 @@
                         </constraints>
                     </view>
                     <connections>
+                        <outlet property="centralView" destination="5dy-SP-smM" id="loh-Li-tDk"/>
                         <outlet property="selectedCenter" destination="hnJ-ph-yfV" id="Uvg-w8-L8Y"/>
                         <outlet property="selectedLeft" destination="DKm-Jg-ObU" id="nG9-WY-EOD"/>
                         <outlet property="selectedRight" destination="v6W-Kj-8g3" id="AK2-pL-Umy"/>

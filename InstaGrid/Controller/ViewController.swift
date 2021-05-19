@@ -1,12 +1,17 @@
 import UIKit
 
-class ViewController: UIViewController, UINavigationControllerDelegate, UIImagePickerControllerDelegate {
-    
+class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
+    var swipe : UISwipeGestureRecognizer?
     override func viewDidLoad() {
         super.viewDidLoad()
+        
         // Do any additional setup after loading the view.
+        swipe = UISwipeGestureRecognizer(target: self, action: #selector(respondSwipe))
+        centralView.addGestureRecognizer(swipe!)
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(swipeDirection), name: UIDevice.orientationDidChangeNotification, object: nil)
+        
     }
-    
     
     //======================
     // MARK: - Outlet
@@ -27,22 +32,26 @@ class ViewController: UIViewController, UINavigationControllerDelegate, UIImageP
     // Icon selected left
     @IBOutlet weak var selectedLeft: UIImageView!
     
+    // Central view, wich contains photos
+    @IBOutlet weak var centralView: UIView!
+    
+    
     
     //======================
     // MARK: - Action
     //======================
     
     // Layout button action - Touch Up Inside
-    @IBAction func layoutButtonAction(_ sender: UIButton) {
+    @IBAction private func layoutButtonAction(_ sender: UIButton) {
         updatePhotoButtonLayout(withLayoutButton : sender)
         selectedButton(withLayoutButton : sender)
     }
     
     // Photo button action - Touch Up Inside
-    @IBAction func photoButtonAction(_ sender: UIButton) {
+    @IBAction private func photoButtonAction(_ sender: UIButton) {
         
         // To access at the gallery
-        butonSelectedbuton = sender
+        picture = sender
         let  imagePickerController = UIImagePickerController ()
         imagePickerController.delegate = self
         self .present ( imagePickerController, animated: true, completion: nil )
@@ -54,8 +63,9 @@ class ViewController: UIViewController, UINavigationControllerDelegate, UIImageP
     // MARK: - Func
     //======================
     
+    
     // Function to update the pictures layout in the central view
-    private func updatePhotoButtonLayout(withLayoutButton : UIButton) {
+    private  func updatePhotoButtonLayout(withLayoutButton : UIButton) {
         switch withLayoutButton {
         case layoutButton[0] :
             photoButton[1].isHidden = false
@@ -70,21 +80,64 @@ class ViewController: UIViewController, UINavigationControllerDelegate, UIImageP
         }
     }
     
-
     
     // Function to save the picture in the button
-    private var butonSelectedbuton : UIButton!
+    private var picture : UIButton!
     func imagePickerController (_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any] ) {
         let image = info[ UIImagePickerController.InfoKey.originalImage] as! UIImage
-        butonSelectedbuton.setImage(image, for: .normal)
+        picture.setImage(image, for: .normal)
+        picture.imageView?.contentMode = .scaleAspectFill   // Keep the picture scale aspect
         picker.dismiss ( animated: true, completion: nil )
     }
     
+    // After the swipe >> share the picture
+    @objc func respondSwipe () {
+        let transform : CGAffineTransform
+        if swipe?.direction == .up {
+            transform = CGAffineTransform(translationX: 0, y: -UIScreen.main.bounds.height)
+        } else {
+            transform = CGAffineTransform(translationX: -UIScreen.main.bounds.width, y: 0)
+        }
+        UIView.animate(withDuration: 1, animations: { [self] in
+            centralView.transform = transform
+        }, completion:{_ in
+            self.shareImage()
+        } )
+    }
     
     
-    //======================
-    // MARK: - Test phase
-    //======================
+    // Transform the UIView into an UIImage
+    private func imageView (view: UIView) -> UIImage {
+        let image = UIGraphicsImageRenderer ( size: centralView.bounds.size )
+        return image.image { _ in centralView.drawHierarchy(in: centralView.bounds, afterScreenUpdates: true) }
+    }
+    
+    
+    // To share the UIImage
+    private func shareImage() {
+        let imageToShare = [imageView(view: centralView)]
+        let activityViewController = UIActivityViewController(activityItems: imageToShare, applicationActivities: nil)
+        //let activityViewController = UIActivityViewController(activityItems: [centralView.image], applicationActivities: nil)
+        
+        activityViewController.popoverPresentationController?.sourceView = view
+        present(activityViewController, animated: true)
+        activityViewController.completionWithItemsHandler = { _, _, _, _ in
+            UIView.animate(withDuration: 0.5) {
+                self.centralView.transform = .identity
+            }
+        }
+    }
+    
+    
+    // Swipe direction following orientation device
+    @objc private func swipeDirection() {
+        if UIDevice.current.orientation == .landscapeLeft || UIDevice.current.orientation == .landscapeRight {
+            swipe?.direction = .left
+        } else {
+            swipe?.direction = .up
+        }
+    }
+    
     
     // Function to display or not the selected button above the layout button
     private func selectedButton(withLayoutButton : UIButton) {
@@ -107,12 +160,67 @@ class ViewController: UIViewController, UINavigationControllerDelegate, UIImageP
     
     
     
+    //======================
+    // MARK: - Test phase
+    //======================
+    
+    
+    
+    //extension UIView {
+    //    func constrainAsSquare(container: UIView, multiplier: CGFloat) {
+    //        translatesAutoresizingMaskIntoConstraints = false
+    //
+    //        centerXAnchor.constraint(equalTo: container.centerXAnchor).isActive = true
+    //        centerYAnchor.constraint(equalTo: container.centerYAnchor).isActive = true
+    //
+    //        widthAnchor.constraint(equalToConstant: .greatestFiniteMagnitude).activate(with: .defaultLow)
+    //
+    //        heightAnchor.constraint(lessThanOrEqualTo: container.heightAnchor, multiplier: multiplier).activate(with: .defaultHigh)
+    //        widthAnchor.constraint(lessThanOrEqualTo: container.widthAnchor, multiplier: multiplier).activate(with: .defaultHigh)
+    //
+    //        widthAnchor.constraint(equalTo: heightAnchor).activate(with: .required)
+    //    }
+    //}
+    //
+    //extension NSLayoutConstraint {
+    //    @discardableResult
+    //    func activate(with priority: UILayoutPriority) -> NSLayoutConstraint {
+    //        self.priority = priority
+    //        isActive = true
+    //        return self
+    //    }
+    //}
+    //
+    
+    //    private func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
+    //        guard let image = info[UIImagePickerController.InfoKey.originalImage] as? UIImage else { return }
+    //
+    //        for photo in photoButton {
+    //            if photo.isSelected {
+    //                photo.setImage(image, for: .normal)
+    //                photo.imageView?.contentMode = .scaleAspectFill
+    //            }
+    //        }
+    //        picker.dismiss(animated: true, completion: nil)
+    //    }
+    //
+    //}
+    
+    //extension ViewController : UIImagePickerControllerDelegate, UINavigationControllerDelegate {
+    //    private func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
+    //        guard let image = info[UIImagePickerController.InfoKey.originalImage] as? UIImage else { return }
+    //
+    //        for photo in photoButton {
+    //            if photo.isSelected {
+    //                photo.setImage(image, for: .normal)
+    //                photo.imageView?.contentMode = .scaleAspectFill
+    //            }
+    //        }
+    //        picker.dismiss(animated: true, completion: nil)
+    //    }
+    //}
+    
     
     
     
 }
-
-
-
-
-
