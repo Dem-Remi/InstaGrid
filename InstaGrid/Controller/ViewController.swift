@@ -8,6 +8,7 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         // Do any additional setup after loading the view.
         swipe = UISwipeGestureRecognizer(target: self, action: #selector(respondSwipe))
         centralView.addGestureRecognizer(swipe!)
+//        swipeInformation.addGestureRecognizer(swipe!)
         
         NotificationCenter.default.addObserver(self, selector: #selector(swipeDirection), name: UIDevice.orientationDidChangeNotification, object: nil)
         
@@ -35,7 +36,8 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
     // Central view, wich contains photos
     @IBOutlet weak var centralView: UIView!
     
-    
+    // Swipe "side" (text + arrow)
+    @IBOutlet weak var swipeInformation: UIView!
     
     //======================
     // MARK: - Action

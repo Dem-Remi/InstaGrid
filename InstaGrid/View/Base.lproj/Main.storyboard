@@ -198,22 +198,22 @@
                                         </variation>
                                     </view>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="3qg-e9-idO" userLabel="Swipe">
-                                        <rect key="frame" x="10" y="154.5" width="394" height="33"/>
+                                        <rect key="frame" x="10" y="151" width="394" height="36.5"/>
                                         <subviews>
                                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" distribution="fillProportionally" translatesAutoresizingMaskIntoConstraints="NO" id="BNF-WB-1TY">
-                                                <rect key="frame" x="0.0" y="0.0" width="394" height="33"/>
+                                                <rect key="frame" x="0.0" y="0.0" width="394" height="36.5"/>
                                                 <subviews>
                                                     <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" image="Arrow Up" translatesAutoresizingMaskIntoConstraints="NO" id="vME-10-cAZ">
                                                         <rect key="frame" x="0.0" y="0.0" width="394" height="9.5"/>
                                                         <variation key="heightClass=compact" image="Arrow Left"/>
                                                     </imageView>
                                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" usesAttributedText="YES" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="air-me-Aco">
-                                                        <rect key="frame" x="0.0" y="9.5" width="394" height="23.5"/>
+                                                        <rect key="frame" x="0.0" y="9.5" width="394" height="27"/>
                                                         <attributedString key="attributedText">
                                                             <fragment content="Swipe up to share">
                                                                 <attributes>
-                                                                    <color key="NSColor" red="0.99989861250000001" green="1" blue="0.99988931420000005" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                                                                    <font key="NSFont" size="20" name="HelveticaNeue"/>
+                                                                    <color key="NSColor" red="0.99999600649999998" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                                                    <font key="NSFont" size="24" name="Delm-Medium"/>
                                                                     <paragraphStyle key="NSParagraphStyle" alignment="center" lineBreakMode="wordWrapping" baseWritingDirection="natural" tighteningFactorForTruncation="0.0"/>
                                                                 </attributes>
                                                             </fragment>
@@ -222,8 +222,8 @@
                                                             <attributedString key="attributedText">
                                                                 <fragment content="Swipe left to share">
                                                                     <attributes>
-                                                                        <color key="NSColor" red="0.99989861250000001" green="1" blue="0.99988931420000005" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                                                                        <font key="NSFont" size="20" name="HelveticaNeue"/>
+                                                                        <color key="NSColor" red="0.99999600649999998" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                                                        <font key="NSFont" size="24" name="Delm-Medium"/>
                                                                         <paragraphStyle key="NSParagraphStyle" alignment="center" lineBreakMode="wordWrapping" baseWritingDirection="natural" tighteningFactorForTruncation="0.0"/>
                                                                     </attributes>
                                                                 </fragment>
@@ -346,6 +346,7 @@
                         <outlet property="selectedCenter" destination="hnJ-ph-yfV" id="Uvg-w8-L8Y"/>
                         <outlet property="selectedLeft" destination="DKm-Jg-ObU" id="nG9-WY-EOD"/>
                         <outlet property="selectedRight" destination="v6W-Kj-8g3" id="AK2-pL-Umy"/>
+                        <outlet property="swipeInformation" destination="3qg-e9-idO" id="9hd-ZH-l5d"/>
                         <outletCollection property="photoButton" destination="Hds-eP-gHz" collectionClass="NSMutableArray" id="XJC-qq-1lY"/>
                         <outletCollection property="layoutButton" destination="yRq-LI-h1S" collectionClass="NSMutableArray" id="yM6-Zq-JIq"/>
                         <outletCollection property="layoutButton" destination="lfM-di-yDQ" collectionClass="NSMutableArray" id="MM5-By-Sjw"/>
