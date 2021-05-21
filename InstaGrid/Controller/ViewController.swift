@@ -8,7 +8,6 @@ final class ViewController: UIViewController, UIImagePickerControllerDelegate, U
         // Do any additional setup after loading the view.
         swipe = UISwipeGestureRecognizer(target: self, action: #selector(respondSwipe))
         centralView.addGestureRecognizer(swipe!)
-        //        swipeInformation.addGestureRecognizer(swipe!)     // ❌ Test pour faire le swipe du texte en plus de la centralView. Non concluant
         
         NotificationCenter.default.addObserver(self, selector: #selector(swipeDirection), name: UIDevice.orientationDidChangeNotification, object: nil)
     }
