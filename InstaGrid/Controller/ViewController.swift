@@ -1,18 +1,19 @@
 import UIKit
 
-class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
-    var swipe : UISwipeGestureRecognizer?
+final class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
+    private var swipe : UISwipeGestureRecognizer?
     override func viewDidLoad() {
         super.viewDidLoad()
         
         // Do any additional setup after loading the view.
         swipe = UISwipeGestureRecognizer(target: self, action: #selector(respondSwipe))
         centralView.addGestureRecognizer(swipe!)
-//        swipeInformation.addGestureRecognizer(swipe!)
+        //        swipeInformation.addGestureRecognizer(swipe!)     // ❌ Test pour faire le swipe du texte en plus de la centralView. Non concluant
         
         NotificationCenter.default.addObserver(self, selector: #selector(swipeDirection), name: UIDevice.orientationDidChangeNotification, object: nil)
-        
     }
+    
+    
     
     //======================
     // MARK: - Outlet
@@ -39,9 +40,12 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
     // Swipe "side" (text + arrow)
     @IBOutlet weak var swipeInformation: UIView!
     
+    
+    
     //======================
     // MARK: - Action
     //======================
+    
     
     // Layout button action - Touch Up Inside
     @IBAction private func layoutButtonAction(_ sender: UIButton) {
@@ -49,9 +53,9 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         selectedButton(withLayoutButton : sender)
     }
     
+    
     // Photo button action - Touch Up Inside
     @IBAction private func photoButtonAction(_ sender: UIButton) {
-        
         // To access at the gallery
         picture = sender
         let  imagePickerController = UIImagePickerController ()
@@ -83,16 +87,27 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
     }
     
     
-    // Function to save the picture in the button
-    private var picture : UIButton!
-    func imagePickerController (_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any] ) {
-        let image = info[ UIImagePickerController.InfoKey.originalImage] as! UIImage
-        picture.setImage(image, for: .normal)
-        picture.imageView?.contentMode = .scaleAspectFill   // Keep the picture scale aspect
-        picker.dismiss ( animated: true, completion: nil )
+    // Function to display or not the selected button above the layout button
+    private func selectedButton(withLayoutButton : UIButton) {
+        switch withLayoutButton {
+        case layoutButton[0] :
+            selectedRight.isHidden = false
+            selectedLeft.isHidden = true
+            selectedCenter.isHidden = true
+        case layoutButton[1] :
+            selectedRight.isHidden = true
+            selectedLeft.isHidden = true
+            selectedCenter.isHidden = false
+        case layoutButton[2] :
+            selectedRight.isHidden = true
+            selectedLeft.isHidden = false
+            selectedCenter.isHidden = true
+        default: break
+        }
     }
     
-    // After the swipe >> share the picture
+    
+    // Function to share the picture after the swipe
     @objc func respondSwipe () {
         let transform : CGAffineTransform
         if swipe?.direction == .up {
@@ -108,19 +123,17 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
     }
     
     
-    // Transform the UIView into an UIImage
+    // Function to transform the UIView into an UIImage, in order to share the UIImage
     private func imageView (view: UIView) -> UIImage {
         let image = UIGraphicsImageRenderer ( size: centralView.bounds.size )
         return image.image { _ in centralView.drawHierarchy(in: centralView.bounds, afterScreenUpdates: true) }
     }
     
     
-    // To share the UIImage
+    // Function to share the UIImage
     private func shareImage() {
         let imageToShare = [imageView(view: centralView)]
         let activityViewController = UIActivityViewController(activityItems: imageToShare, applicationActivities: nil)
-        //let activityViewController = UIActivityViewController(activityItems: [centralView.image], applicationActivities: nil)
-        
         activityViewController.popoverPresentationController?.sourceView = view
         present(activityViewController, animated: true)
         activityViewController.completionWithItemsHandler = { _, _, _, _ in
@@ -131,7 +144,7 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
     }
     
     
-    // Swipe direction following orientation device
+    // Function to adapt the swipe direction following orientation device
     @objc private func swipeDirection() {
         if UIDevice.current.orientation == .landscapeLeft || UIDevice.current.orientation == .landscapeRight {
             swipe?.direction = .left
@@ -141,88 +154,23 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
     }
     
     
-    // Function to display or not the selected button above the layout button
-    private func selectedButton(withLayoutButton : UIButton) {
-        switch withLayoutButton {
-        case layoutButton[0] :
-            selectedRight.isHidden = false
-            selectedLeft.isHidden = true
-            selectedCenter.isHidden = true
-        case layoutButton[2] :
-            selectedRight.isHidden = true
-            selectedLeft.isHidden = false
-            selectedCenter.isHidden = true
-        case layoutButton[1] :
-            selectedRight.isHidden = true
-            selectedLeft.isHidden = true
-            selectedCenter.isHidden = false
-        default: break
-        }
+    // Function to import a picture from the galery
+    func imagePickerController (_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any] ) {
+        let image = info[ UIImagePickerController.InfoKey.originalImage] as! UIImage
+        picture.setImage(image, for: .normal)
+        picture.imageView?.contentMode = .scaleAspectFill   // ✅ To keep the picture scale aspect 🎉
+        picker.dismiss ( animated: true, completion: nil )
     }
     
     
     
     //======================
-    // MARK: - Test phase
+    // MARK: - Property
     //======================
     
     
-    
-    //extension UIView {
-    //    func constrainAsSquare(container: UIView, multiplier: CGFloat) {
-    //        translatesAutoresizingMaskIntoConstraints = false
-    //
-    //        centerXAnchor.constraint(equalTo: container.centerXAnchor).isActive = true
-    //        centerYAnchor.constraint(equalTo: container.centerYAnchor).isActive = true
-    //
-    //        widthAnchor.constraint(equalToConstant: .greatestFiniteMagnitude).activate(with: .defaultLow)
-    //
-    //        heightAnchor.constraint(lessThanOrEqualTo: container.heightAnchor, multiplier: multiplier).activate(with: .defaultHigh)
-    //        widthAnchor.constraint(lessThanOrEqualTo: container.widthAnchor, multiplier: multiplier).activate(with: .defaultHigh)
-    //
-    //        widthAnchor.constraint(equalTo: heightAnchor).activate(with: .required)
-    //    }
-    //}
-    //
-    //extension NSLayoutConstraint {
-    //    @discardableResult
-    //    func activate(with priority: UILayoutPriority) -> NSLayoutConstraint {
-    //        self.priority = priority
-    //        isActive = true
-    //        return self
-    //    }
-    //}
-    //
-    
-    //    private func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
-    //        guard let image = info[UIImagePickerController.InfoKey.originalImage] as? UIImage else { return }
-    //
-    //        for photo in photoButton {
-    //            if photo.isSelected {
-    //                photo.setImage(image, for: .normal)
-    //                photo.imageView?.contentMode = .scaleAspectFill
-    //            }
-    //        }
-    //        picker.dismiss(animated: true, completion: nil)
-    //    }
-    //
-    //}
-    
-    //extension ViewController : UIImagePickerControllerDelegate, UINavigationControllerDelegate {
-    //    private func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
-    //        guard let image = info[UIImagePickerController.InfoKey.originalImage] as? UIImage else { return }
-    //
-    //        for photo in photoButton {
-    //            if photo.isSelected {
-    //                photo.setImage(image, for: .normal)
-    //                photo.imageView?.contentMode = .scaleAspectFill
-    //            }
-    //        }
-    //        picker.dismiss(animated: true, completion: nil)
-    //    }
-    //}
-    
-    
+    // Property picture, type UIButton
+    private var picture : UIButton!
     
     
 }
