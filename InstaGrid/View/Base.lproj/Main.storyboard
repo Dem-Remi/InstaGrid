@@ -203,7 +203,7 @@
                                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" distribution="fillProportionally" translatesAutoresizingMaskIntoConstraints="NO" id="BNF-WB-1TY">
                                                 <rect key="frame" x="0.0" y="0.0" width="394" height="36.5"/>
                                                 <subviews>
-                                                    <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" image="Arrow Up" translatesAutoresizingMaskIntoConstraints="NO" id="vME-10-cAZ">
+                                                    <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="center" image="Arrow Up" translatesAutoresizingMaskIntoConstraints="NO" id="vME-10-cAZ">
                                                         <rect key="frame" x="0.0" y="0.0" width="394" height="9.5"/>
                                                         <variation key="heightClass=compact" image="Arrow Left"/>
                                                     </imageView>
