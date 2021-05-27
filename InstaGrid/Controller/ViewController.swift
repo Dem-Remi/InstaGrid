@@ -6,7 +6,8 @@ final class ViewController: UIViewController, UIImagePickerControllerDelegate, U
         super.viewDidLoad()
         // Do any additional setup after loading the view.
         swipe = UISwipeGestureRecognizer(target: self, action: #selector(respondSwipe))
-        swipe?.direction = UIDevice.current.orientation.isPortrait ? .up : .left
+//        swipe?.direction = UIDevice.current.orientation.isPortrait ? .up : .left
+        swipe?.direction = UIApplication.shared.statusBarOrientation.isPortrait ? .up : .left
         view.addGestureRecognizer(swipe!)
     }
     override func viewDidAppear(_ animated: Bool) {
@@ -50,7 +51,6 @@ final class ViewController: UIViewController, UIImagePickerControllerDelegate, U
         updatePhotoButtonLayout(withLayoutButton: sender)
         selectedButton(withLayoutButton: sender)
     }
-
     // Photo button action - Touch Up Inside
     @IBAction private func photoButtonAction(_ sender: UIButton) {
         // To access at the gallery
@@ -107,7 +107,7 @@ final class ViewController: UIViewController, UIImagePickerControllerDelegate, U
         } else {
             transform = CGAffineTransform(translationX: -UIScreen.main.bounds.width, y: 0)
         }
-        UIView.animate(withDuration: 1, animations: { [self] in
+        UIView.animate(withDuration: 0.5, animations: { [self] in
             centralView.transform = transform
             swipeInformation.transform = transform
         }, completion: {_ in
@@ -137,12 +137,24 @@ final class ViewController: UIViewController, UIImagePickerControllerDelegate, U
 
     // Function to adapt the swipe direction following orientation device
     @objc private func swipeDirection() {
-        if UIDevice.current.orientation == .landscapeLeft || UIDevice.current.orientation == .landscapeRight {
+        if UIApplication.shared.statusBarOrientation.isLandscape {
+            // if UIDevice.current.orientation == .landscapeLeft || UIDevice.current.orientation == .landscapeRight {
             swipe?.direction = .left
         } else {
             swipe?.direction = .up
         }
     }
+
+//    https://www.hackingwithswift.com/example-code/uikit/how-to-read-the-interface-orientation-portrait-or-landscape
+//    override func willTransition(to newCollection: UITraitCollection, with coordinator: UIViewControllerTransitionCoordinator) {
+//        coordinator.animate(alongsideTransition: { context in
+//            if UIApplication.shared.statusBarOrientation.isLandscape {
+//                // activate landscape changes
+//            } else {
+//                // activate portrait changes
+//            }
+//        })
+//    }
 
     // Function to import a picture from the galery
     func imagePickerController (_ picker: UIImagePickerController,
